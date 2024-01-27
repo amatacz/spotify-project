@@ -1,0 +1,3 @@
+logsBucket: "gs://spotify-project-logs-bucket"
+steps:
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"

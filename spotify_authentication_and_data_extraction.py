@@ -16,7 +16,7 @@ REDIRECT_URI = os.getenv("REDIRECT_URI")
 SCOPE = os.getenv("SCOPE")
 
 # Set URL variables
-AUTH_URL = "https:/accounts.spotify.com/authorize"
+AUTH_URL = "https://accounts.spotify.com/authorize"
 TOKEN_URL = "https://accounts.spotify.com/api/token"
 API_BASE_URL = "https://api.spotify.com/v1/"
 
@@ -169,8 +169,8 @@ def main():
     data['tracks_of_the_month'] = tracks_of_the_month
     data['artists_of_the_month'] = artists_of_the_month
 
-    with open('data.json', 'w') as f:
-        json.dump(data, f)
+    # with open('data.json', 'w') as f:
+    #     json.dump(data, f)
 
     return data
 
