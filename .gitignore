@@ -2,6 +2,5 @@ env/
 notes.txt
 __pycache__/
 data.json
-gcloud/
 env_variables.yaml
 
