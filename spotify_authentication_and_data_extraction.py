@@ -7,13 +7,13 @@ import json
 from datetime import datetime
 
 
-# Load environmental variables
-load_dotenv()
+# # Load environmental variables
+# load_dotenv()
 
-CLIENT_ID = os.getenv("CLIENT_ID")
-CLIENT_SECRET = os.getenv("CLIENT_SECRET")
-REDIRECT_URI = os.getenv("REDIRECT_URI")
-SCOPE = os.getenv("SCOPE")
+CLIENT_ID = os.environ.get("CLIENT_ID")
+CLIENT_SECRET = os.environ.get("CLIENT_SECRET")
+REDIRECT_URI = os.environ.get("REDIRECT_URI")
+SCOPE = os.environ.get("SCOPE")
 
 # Set URL variables
 AUTH_URL = "https://accounts.spotify.com/authorize"
