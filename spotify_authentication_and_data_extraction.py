@@ -8,9 +8,9 @@ from datetime import datetime
 
 
 # # Load environmental variables
-# load_dotenv()
+load_dotenv()
 
-CLIENT_ID = os.environ.get("CLIENT_ID", "NIE")
+CLIENT_ID = os.getenv("CLIENT_ID", "NIE")
 CLIENT_SECRET = os.environ.get("CLIENT_SECRET", "NIE")
 REDIRECT_URI = os.environ.get("REDIRECT_URI", "NIE")
 SCOPE = os.environ.get("SCOPE", "NIE")
