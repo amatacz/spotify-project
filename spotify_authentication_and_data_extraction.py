@@ -10,10 +10,10 @@ from datetime import datetime
 # Load environmental variables
 load_dotenv()
 
-_CLIENT_ID = os.getenv("CLIENT_ID")
-_CLIENT_SECRET = os.getenv("CLIENT_SECRET")
-_REDIRECT_URI = os.getenv("REDIRECT_URI")
-_SCOPE = os.getenv("SCOPE")
+CLIENT_ID = os.getenv("CLIENT_ID")
+CLIENT_SECRET = os.getenv("CLIENT_SECRET")
+REDIRECT_URI = os.getenv("REDIRECT_URI")
+SCOPE = os.getenv("SCOPE")
 
 # Set URL variables
 AUTH_URL = "https://accounts.spotify.com/authorize"
@@ -37,10 +37,10 @@ app.secret_key = "qwertyuiopasdfghjklzxcvbnm"
 def login():
     # Set parameters for authentication url
     params = {
-        "client_id": _CLIENT_ID,
+        "client_id": CLIENT_ID,
         "response_type": "code",
-        "scope": _SCOPE,
-        "redirect_uri": _REDIRECT_URI,
+        "scope": SCOPE,
+        "redirect_uri": REDIRECT_URI,
     }
     # Create auth_url for create authorization code
     auth_url = f"{AUTH_URL}?{urllib.parse.urlencode(params)}"
@@ -59,9 +59,9 @@ def callback():
         req_body = {
             "code": request.args["code"],
             "grant_type": "authorization_code",
-            "redirect_uri": _REDIRECT_URI,
-            "client_id": _CLIENT_ID,
-            "client_secret": _CLIENT_SECRET
+            "redirect_uri": REDIRECT_URI,
+            "client_id": CLIENT_ID,
+            "client_secret": CLIENT_SECRET
         }
     # Request for token using TOKEN_URL and requred parameters
     response = requests.post(TOKEN_URL, data=req_body)
@@ -138,8 +138,8 @@ def refresh_token():
         req_body = {
             "grant_type": "refresh_token",
             "refresh_token": session["refresh_token"],
-            "client_id": _CLIENT_ID,
-            "client_secret": _CLIENT_SECRET
+            "client_id": CLIENT_ID,
+            "client_secret": CLIENT_SECRET
         }
 
         response = requests.post(TOKEN_URL, data=req_body)
