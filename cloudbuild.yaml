@@ -1,3 +1,5 @@
 logsBucket: "gs://spotify-project-logs-bucket"
 steps:
-  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+- name: "gcr.io/cloud-builders/gcloud"
+  args: ["app", "deploy"]
+timeout: "1600s"
