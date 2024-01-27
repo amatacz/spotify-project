@@ -8,7 +8,7 @@ from datetime import datetime
 
 
 # # Load environmental variables
-# load_dotenv()
+load_dotenv()
 
 CLIENT_ID = os.getenv("CLIENT_ID", "NIE")
 CLIENT_SECRET = os.environ.get("CLIENT_SECRET", "NIE")
