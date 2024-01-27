@@ -40,10 +40,11 @@ def login():
         "client_id": CLIENT_ID,
         "response_type": "code",
         "scope": SCOPE,
-        "redirect_uri": REDIRECT_URI
+        "redirect_uri": REDIRECT_URI,
     }
     # Create auth_url for create authorization code
     auth_url = f"{AUTH_URL}?{urllib.parse.urlencode(params)}"
+    print(f"Logged in.\n {auth_url}")
     return redirect(auth_url)
 
 
@@ -70,33 +71,10 @@ def callback():
     session["access_token"] = token_info["access_token"]
     session["refresh_token"] = token_info["refresh_token"]
     session["expires_at"] = datetime.now().timestamp() + token_info["expires_in"]
+    print("I GOT A TOKEN")
 
-    return redirect("/top-artists")
+    return redirect("/get-data")
 
-# DATA NOT RELEVAN - WILL BE DELETED LATER???
-# @app.route("/playlists")
-# def get_playlists():
-#     # Check if access token is in the session. If not ask user for login.
-#     if "access_token" not in session:
-#         return redirect("/")
-
-#     # Check if access token expired if yes, refresh it
-#     if datetime.now().timestamp() > session["expires_at"]:
-#         # Store current url in session. Allows to get back here after token refresh.        
-#         session["url"] = url_for("get_playlists")
-#         print("TOKEN EXPIRED. REFRESHING")
-#         return redirect("/refresh-token")
-
-#     # Set headers with valid token
-#     headers = {
-#         "Authorization": f"Bearer {session["access_token"]}"
-#     }
-#     # Request my playlists.
-#     response = requests.get(API_BASE_URL + "me/playlists", headers=headers)
-
-#     # Store requested playlists as json
-#     playlists = json.dumps(response.json())
-#     return playlists
 
 
 @app.route("/top-artists")
@@ -185,8 +163,6 @@ def main():
     Returns dictionary with all data.
     """
     data = {}
-    login()
-    # playlists = get_playlists()
     tracks_of_the_month = get_tracks_of_the_month()
     artists_of_the_month = get_artists_of_the_month()
 
@@ -198,9 +174,33 @@ def main():
 
     return data
 
+# DATA NOT RELEVANT - WILL BE DELETED LATER???
+# @app.route("/playlists")
+# def get_playlists():
+#     # Check if access token is in the session. If not ask user for login.
+#     if "access_token" not in session:
+#         return redirect("/")
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=True, use_reloader=False)
+#     # Check if access token expired if yes, refresh it
+#     if datetime.now().timestamp() > session["expires_at"]:
+#         # Store current url in session. Allows to get back here after token refresh.        
+#         session["url"] = url_for("get_playlists")
+#         print("TOKEN EXPIRED. REFRESHING")
+#         return redirect("/refresh-token")
+
+#     # Set headers with valid token
+#     headers = {
+#         "Authorization": f"Bearer {session["access_token"]}"
+#     }
+#     # Request my playlists.
+#     response = requests.get(API_BASE_URL + "me/playlists", headers=headers)
+
+#     # Store requested playlists as json
+#     playlists = json.dumps(response.json())
+#     return playlists
+
+
+
 
 # @app.route("/redirect")
 # def redirect_page():

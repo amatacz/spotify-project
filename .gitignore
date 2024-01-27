@@ -2,3 +2,4 @@ env/
 .ENV
 notes.txt
 __pycache__/
+data.json
