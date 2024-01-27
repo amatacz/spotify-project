@@ -9,7 +9,7 @@ steps:
   args: 
    - '-c'
    - |
-      sed -i "s/##_CLIENT_ID##/${_CLIENT_ID}/g s/##_CLIENT_SECRET##/${_CLIENT_SECRET}/g ; s/##_REDIRECT_URI##/${_REDIRECT_URI}/g ; s/##_SCOPE##/${_SCOPE}/g" app.yaml
+      sed -i "s/##_CLIENT_ID##/${_CLIENT_ID}/g ; s/##_CLIENT_SECRET##/${_CLIENT_SECRET}/g ; s/##_REDIRECT_URI##/${_REDIRECT_URI}/g ; s/##_SCOPE##/${_SCOPE}/g" app.yaml
       gcloud config set app/cloud_build_timeout 1600
       gcloud app deploy
 
