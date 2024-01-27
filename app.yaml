@@ -5,9 +5,5 @@ handlers:
 - url: /.*
   script: auto
 
-# env_variables:
-#   _CLIENT_ID: ##_CLIENT_ID##
-#   _CLIENT_SECRET: ##_CLIENT_SECRET##
-#   #REDIRECT_URI: 'http://localhost:8080/callback'
-#   _REDIRECT_URI: ##_REDIRECT_URI##
-#   _SCOPE: ##_SCOPE##
+includes:
+  env_variables.yaml
