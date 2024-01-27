@@ -1,7 +1,0 @@
-env_variables:
-  CLIENT_ID: 'd207c7d86858416e8f1b3b799837ab76'
-  CLIENT_SECRET: 'ff5d76c4ad1c4fa69098fc2a4299abd8'
-  REDIRECT_URI: 'https://deft-melody-404117.uc.r.appspot.com/callback'
-  SCOPE: 'user-library-read playlist-read-private playlist-modify-public playlist-modify-private user-read-email user-top-read'
-
-
