@@ -76,7 +76,6 @@ def callback():
     return redirect("/get-data")
 
 
-
 @app.route("/top-artists")
 def get_artists_of_the_month():
     # Check if access token is in the session. If not ask user for login.
@@ -169,8 +168,12 @@ def main():
     data['tracks_of_the_month'] = tracks_of_the_month
     data['artists_of_the_month'] = artists_of_the_month
 
-    # with open('data.json', 'w') as f:
-    #     json.dump(data, f)
+    function_url = "https://us-central1-deft-melody-404117.cloudfunctions.net/get-monthly-spotify-data"
+    response = requests.post(function_url, json=data)
+    if response.status_code == 200:
+        print("Data sent successfully")
+    else:
+        print("Error sending data:", response.status_code, response.text)
 
     return data
 
