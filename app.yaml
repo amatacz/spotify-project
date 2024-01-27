@@ -6,8 +6,8 @@ handlers:
   script: auto
 
 env_variables:
-  CLIENT_ID: _CLIENT_ID
-  CLIENT_SECRET: _CLIENT_SECRET
+  CLIENT_ID: ${_CLIENT_ID}
+  CLIENT_SECRET: ${_CLIENT_SECRET}
   #REDIRECT_URI: 'http://localhost:8080/callback'
-  REDIRECT_URI: _REDIRECT_URI
-  SCOPE: _SCOPE
+  REDIRECT_URI: ${_REDIRECT_URI}
+  SCOPE: ${_SCOPE}
