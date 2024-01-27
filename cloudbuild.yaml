@@ -4,8 +4,7 @@ logsBucket: "gs://spotify-project-logs-bucket"
 #   args: ["app", "deploy"]
 # timeout: "1600s"
 steps:
-
-- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+- name: 'gcr.io/cloud-builders/gcloud'
   entrypoint: 'bash'
   #args: ['-c', 'gcloud config set app/cloud_build_timeout 1600 && gcloud app deploy']
   args: ['-c','echo $_CLIENT_ID > /workspace/env_variables.yaml && gcloud config set app/cloud_build_timeout 1600 && gcloud app deploy']
