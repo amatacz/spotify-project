@@ -41,6 +41,7 @@ def login():
         "response_type": "code",
         "scope": SCOPE,
         "redirect_uri": REDIRECT_URI,
+        "show_dialog": True
     }
     # Create auth_url for create authorization code
     auth_url = f"{AUTH_URL}?{urllib.parse.urlencode(params)}"
