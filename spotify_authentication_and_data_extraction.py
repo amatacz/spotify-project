@@ -37,6 +37,7 @@ app.secret_key = "qwertyuiopasdfghjklzxcvbnm"
 
 # This function will be called when home address is reached.
 @app.route("/")
+
 def login():
     # Set parameters for authentication url
     params = {
@@ -53,7 +54,6 @@ def login():
 
 @app.route("/callback")
 def callback():
-    print(f"REQUEST ARGS: \n {request.args}")
     # Check if there are any errors
     if "error" in request.args:
         return {"error": request.args["error"]}
@@ -162,6 +162,11 @@ def refresh_token():
 
 @app.route("/get-data")
 def main():
+    print("I AM GETTING DATA...")
+    login()
+    print("Callback in here...")
+    callback()
+    print(f"SESSIONS ARGS:\n{session.keys()}")
     """
     This function goes through all get functions to retrieve data for the last month
     and saves it in dictionary.
