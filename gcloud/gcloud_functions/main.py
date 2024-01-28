@@ -11,6 +11,7 @@ def main(request):
     #                                            'spotify-project-key')
     # gcloud_integrator.upload_data_to_cloud_from_dict()
     content_type = request.headers.get('Content-Type')
+    print(content_type)
 
     if content_type == 'application/json':
         data = request.get_json()
