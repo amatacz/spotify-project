@@ -7,8 +7,11 @@ import json
 from datetime import datetime
 
 
-# # Load environmental variables
-load_dotenv()
+# # Load environmental variables - UNCOMMENT WHILE LOCAL
+load_dotenv("C:\Users\matacza\Desktop\Projekty\spotify-wrapped-generator\.ENV_LOCAL")
+
+# # Load environmental variables - UNCOMMENT WHILE PROD
+# load_dotenv()
 
 CLIENT_ID = os.getenv("CLIENT_ID", "NIE")
 CLIENT_SECRET = os.environ.get("CLIENT_SECRET", "NIE")
@@ -45,12 +48,12 @@ def login():
     }
     # Create auth_url for create authorization code
     auth_url = f"{AUTH_URL}?{urllib.parse.urlencode(params)}"
-    print(f"Logged in.\n {auth_url}")
     return redirect(auth_url)
 
 
 @app.route("/callback")
 def callback():
+    print(f"REQUEST ARGS: \n {request.args}")
     # Check if there are any errors
     if "error" in request.args:
         return {"error": request.args["error"]}
@@ -79,6 +82,7 @@ def callback():
 
 @app.route("/top-artists")
 def get_artists_of_the_month():
+    print(f"TOP ARTISTS SESSION ARGS:\n {session.keys()}")
     # Check if access token is in the session. If not ask user for login.
     if "access_token" not in session:
         return redirect("/")
@@ -106,6 +110,7 @@ def get_artists_of_the_month():
 @app.route("/top-tracks")
 def get_tracks_of_the_month():
     # Check if access token is in session. If not, ask user for login.
+    print(f"TOP TRACKS SESSION ARGS:\n {session.keys()}")
     if "access_token" not in session:
         redirect("/")
     # Check is token expired. If yes, refresh it.
