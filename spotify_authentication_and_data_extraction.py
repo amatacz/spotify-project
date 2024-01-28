@@ -8,10 +8,10 @@ from datetime import datetime
 
 
 # # Load environmental variables - UNCOMMENT WHILE LOCAL
-load_dotenv("C:\Users\matacza\Desktop\Projekty\spotify-wrapped-generator\.ENV_LOCAL")
+# load_dotenv("C:\Users\matacza\Desktop\Projekty\spotify-wrapped-generator\.ENV_LOCAL")
 
 # # Load environmental variables - UNCOMMENT WHILE PROD
-# load_dotenv()
+load_dotenv()
 
 CLIENT_ID = os.getenv("CLIENT_ID", "NIE")
 CLIENT_SECRET = os.environ.get("CLIENT_SECRET", "NIE")
