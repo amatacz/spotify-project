@@ -2,6 +2,7 @@ import requests
 import functions_framework
 #from shared.gcloud_integration import GCloudIntegration
 
+
 @functions_framework.http
 def main(request):
     # gcloud_integrator = GCloudIntegration()
@@ -9,9 +10,14 @@ def main(request):
     # cloud_key = gcloud_integrator.get_secret('deft-melody-404117',
     #                                            'spotify-project-key')
     # gcloud_integrator.upload_data_to_cloud_from_dict()
-    data = request.get_json()
-    if data:
-        # Process the data here
-        return "Data received and processed successfully"
+    content_type = request.headers.get('Content-Type')
+
+    if content_type == 'application/json':
+        data = request.get_json()
+        if data:
+            # Process the JSON data here
+            return "Data received and processed successfully"
+        else:
+            return "Invalid JSON data", 400
     else:
-        return "No data received", 400
+        return "Unsupported content type", 415
