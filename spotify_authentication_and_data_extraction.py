@@ -169,7 +169,8 @@ def main():
     data['artists_of_the_month'] = artists_of_the_month
 
     function_url = "https://us-central1-deft-melody-404117.cloudfunctions.net/get-monthly-spotify-data"
-    response = requests.post(function_url, json=data)
+    response = requests.post(function_url, json=data,
+                             headers={"Content-Type": "application/json"})
     if response.status_code == 200:
         print("Data sent successfully")
     else:
@@ -201,49 +202,3 @@ def main():
 #     # Store requested playlists as json
 #     playlists = json.dumps(response.json())
 #     return playlists
-
-
-
-
-# @app.route("/redirect")
-# def redirect_page():
-#     session.clear()
-#     code = request.args.get("code")
-#     token_info = create_spotify_oauth().get_access_token(code)
-#     session[TOKEN_INFO] = token_info
-#     return redirect(url_for("save_discover_weekly", _external=True))
-
-
-# @app.route("/saveDiscoverWeekly")
-# def save_discover_weekly():
-#     try:
-#         token_info = get_token()
-#     except Exception as e:
-#         print("User not logged in")
-#         return redirect("/")
-
-
-# def get_token():
-#     token_info = session.get(TOKEN_INFO, None)
-#     if not token_info:
-#         redirect(url_for("login", _external=False))
-
-#     now = int(time.time())
-#     is_expired = token_info["expires_at"] - now < 60
-
-#     if (is_expired):
-#         spotify_oauth = create_spotify_oauth()
-#         token_info = spotify_oauth.refresh_access_token(token_info["refresh_token"])
-
-#     return token_info
-
-
-# def create_spotify_oauth():
-#     return SpotifyOAuth(
-#         client_id=CLIENT_ID,
-#         client_secret=CLIENT_SECRET,
-#         redirect_uri=REDIRECT_URI,
-#         scope=SCOPE)
-
-
-# app.run(debug=True)
