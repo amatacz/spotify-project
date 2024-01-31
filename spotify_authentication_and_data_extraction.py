@@ -37,7 +37,6 @@ app.secret_key = "qwertyuiopasdfghjklzxcvbnm"
 
 # This function will be called when home address is reached.
 @app.route("/")
-
 def login():
     # Set parameters for authentication url
     params = {
@@ -54,6 +53,7 @@ def login():
 
 @app.route("/callback")
 def callback():
+    print("REQUESTS ARGS:\n", request.args)
     # Check if there are any errors
     if "error" in request.args:
         return {"error": request.args["error"]}
@@ -67,17 +67,18 @@ def callback():
             "client_id": CLIENT_ID,
             "client_secret": CLIENT_SECRET
         }
-    # Request for token using TOKEN_URL and requred parameters
-    response = requests.post(TOKEN_URL, data=req_body)
-    token_info = response.json()
+        # Request for token using TOKEN_URL and requred parameters
+        response = requests.post(TOKEN_URL, data=req_body)
+        token_info = response.json()
 
-    # Store access details in session
-    session["access_token"] = token_info["access_token"]
-    session["refresh_token"] = token_info["refresh_token"]
-    session["expires_at"] = datetime.now().timestamp() + token_info["expires_in"]
-    print("I GOT A TOKEN")
+        # Store access details in session
+        session["access_token"] = token_info["access_token"]
+        session["refresh_token"] = token_info["refresh_token"]
+        session["expires_at"] = datetime.now().timestamp() + token_info["expires_in"]
+        print("I GOT A TOKEN")
 
-    return redirect("/get-data")
+        return redirect("/get-data")
+    return redirect("/")
 
 
 @app.route("/top-artists")
@@ -162,11 +163,6 @@ def refresh_token():
 
 @app.route("/get-data")
 def main():
-    print("I AM GETTING DATA...")
-    login()
-    print("Callback in here...")
-    callback()
-    print(f"SESSIONS ARGS:\n{session.keys()}")
     """
     This function goes through all get functions to retrieve data for the last month
     and saves it in dictionary.
