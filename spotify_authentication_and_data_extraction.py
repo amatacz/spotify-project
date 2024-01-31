@@ -175,6 +175,8 @@ def main():
 
     data['tracks_of_the_month'] = tracks_of_the_month
     data['artists_of_the_month'] = artists_of_the_month
+    print(f"HERE IS YOUR DATAl\n{data}")
+
     try:
         function_url = "https://us-central1-deft-melody-404117.cloudfunctions.net/get-monthly-spotify-data"
         response = requests.post(function_url, json=data,
@@ -185,7 +187,6 @@ def main():
             print("Error sending data:", response.status_code, response.text)
     except Exception as e:
         print(f"Something went wrong\n {e}")
-        print(f"HERE IS TOYR DATAl\n{data}")
 
     return data
 
