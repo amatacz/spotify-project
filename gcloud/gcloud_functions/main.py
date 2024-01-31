@@ -1,6 +1,6 @@
 import requests
 import functions_framework
-#from shared.gcloud_integration import GCloudIntegration
+# from shared.gcloud_integration import GCloudIntegration
 
 
 @functions_framework.http

@@ -175,14 +175,17 @@ def main():
 
     data['tracks_of_the_month'] = tracks_of_the_month
     data['artists_of_the_month'] = artists_of_the_month
-
-    function_url = "https://us-central1-deft-melody-404117.cloudfunctions.net/get-monthly-spotify-data"
-    response = requests.post(function_url, json=data,
-                             headers={"Content-Type": "application/json"})
-    if response.status_code == 200:
-        print("Data sent successfully")
-    else:
-        print("Error sending data:", response.status_code, response.text)
+    try:
+        function_url = "https://us-central1-deft-melody-404117.cloudfunctions.net/get-monthly-spotify-data"
+        response = requests.post(function_url, json=data,
+                                headers={"Content-Type": "application/json"})
+        if response.status_code == 200:
+            print("Data sent successfully")
+        else:
+            print("Error sending data:", response.status_code, response.text)
+    except Exception as e:
+        print(f"Something went wrong\n {e}")
+        print(f"HERE IS TOYR DATAl\n{data}")
 
     return data
 

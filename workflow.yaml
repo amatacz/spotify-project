@@ -7,11 +7,11 @@
     headers:
       Content-Type: application/json
     result: flask_response
-- invoke_get-monthly-spotify-data_function:
-  call: http.post
-  args: 
-    url: "https://us-central1-deft-melody-404117.cloudfunctions.net/get-monthly-spotify-data"
-    body: ${flask_response.body}
-    headers:
-      Content-Type: application/json
-    result: function_response
+# - invoke_get-monthly-spotify-data_function:
+#   call: http.post
+#   args: 
+#     url: "https://us-central1-deft-melody-404117.cloudfunctions.net/get-monthly-spotify-data"
+#     body: ${flask_response.body}
+#     headers:
+#       Content-Type: application/json
+#     result: function_response
