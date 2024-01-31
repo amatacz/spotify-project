@@ -8,10 +8,10 @@ from datetime import datetime
 
 
 # # Load environmental variables - UNCOMMENT WHILE LOCAL
-# load_dotenv("C:\Users\matacza\Desktop\Projekty\spotify-wrapped-generator\.ENV_LOCAL")
+load_dotenv("C:\\Users\\matacza\\Desktop\\Projekty\\spotify-wrapped-generator\\.ENV_LOCAL")
 
-# # Load environmental variables - UNCOMMENT WHILE PROD
-load_dotenv()
+# # # Load environmental variables - UNCOMMENT WHILE PROD
+# load_dotenv()
 
 CLIENT_ID = os.getenv("CLIENT_ID", "NIE")
 CLIENT_SECRET = os.environ.get("CLIENT_SECRET", "NIE")
@@ -53,7 +53,7 @@ def login():
 
 @app.route("/callback")
 def callback():
-    print("REQUESTS ARGS:\n", request.args)
+    session.clear()
     # Check if there are any errors
     if "error" in request.args:
         return {"error": request.args["error"]}
@@ -75,7 +75,8 @@ def callback():
         session["access_token"] = token_info["access_token"]
         session["refresh_token"] = token_info["refresh_token"]
         session["expires_at"] = datetime.now().timestamp() + token_info["expires_in"]
-        print("I GOT A TOKEN")
+
+        print(f"SESSION KEYS:\n{session.keys()}")
 
         return redirect("/get-data")
     return redirect("/")
