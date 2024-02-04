@@ -6,24 +6,25 @@ from flask import Flask, request, url_for, session, redirect
 import json
 from datetime import datetime
 
+from gcloud_integration import GCloudIntegration
 
 # # Load environmental variables - UNCOMMENT WHILE LOCAL
-load_dotenv("C:\\Users\\matacza\\Desktop\\Projekty\\spotify-wrapped-generator\\.ENV_LOCAL")
+# load_dotenv("C:\\Users\\matacza\\Desktop\\Projekty\\spotify-wrapped-generator\\.ENV_LOCAL")
+# GOOGLE_APPLICATION_CREDENTIALS = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS ")
 
-# # # Load environmental variables - UNCOMMENT WHILE PROD
+# # Load environmental variables - UNCOMMENT WHILE PROD
 # load_dotenv()
 
+# SPOTIFY ENVIRONMENTAL VARIABLES
 CLIENT_ID = os.getenv("CLIENT_ID", "NIE")
 CLIENT_SECRET = os.environ.get("CLIENT_SECRET", "NIE")
 REDIRECT_URI = os.environ.get("REDIRECT_URI", "NIE")
 SCOPE = os.environ.get("SCOPE", "NIE")
 
-# Set URL variables
+# Set SPOTIFY URL variables
 AUTH_URL = "https://accounts.spotify.com/authorize"
 TOKEN_URL = "https://accounts.spotify.com/api/token"
 API_BASE_URL = "https://api.spotify.com/v1/"
-
-# Flask is used because of OAuth, it allows us store token in session and refresh it
 
 # Create Flask app
 app = Flask(__name__)
@@ -76,15 +77,12 @@ def callback():
         session["refresh_token"] = token_info["refresh_token"]
         session["expires_at"] = datetime.now().timestamp() + token_info["expires_in"]
 
-        print(f"SESSION KEYS:\n{session.keys()}")
-
         return redirect("/get-data")
     return redirect("/")
 
 
 @app.route("/top-artists")
 def get_artists_of_the_month():
-    print(f"TOP ARTISTS SESSION ARGS:\n {session.keys()}")
     # Check if access token is in the session. If not ask user for login.
     if "access_token" not in session:
         return redirect("/")
@@ -112,7 +110,6 @@ def get_artists_of_the_month():
 @app.route("/top-tracks")
 def get_tracks_of_the_month():
     # Check if access token is in session. If not, ask user for login.
-    print(f"TOP TRACKS SESSION ARGS:\n {session.keys()}")
     if "access_token" not in session:
         redirect("/")
     # Check is token expired. If yes, refresh it.
@@ -175,7 +172,14 @@ def main():
 
     data['tracks_of_the_month'] = tracks_of_the_month
     data['artists_of_the_month'] = artists_of_the_month
-    print(f"HERE IS YOUR DATA\n{data}")
+
+    # Send data to spotify-monthly-data bucket
+    gcloud_integrator = GCloudIntegration()
+    gcloud_integrator.get_secret("deft-melody-404117",
+                                 "spotify-app-engine-key")
+    gcloud_integrator.upload_data_to_cloud_from_dict(
+        "spotify_monthly_data_bucket", data,
+        f"{datetime.today().date()}_spotify_monthly_data")
 
     # try:
     #     function_url = "https://us-central1-deft-melody-404117.cloudfunctions.net/get-monthly-spotify-data"
@@ -189,28 +193,3 @@ def main():
     #     print(f"Something went wrong\n {e}")
 
     return data
-
-# DATA NOT RELEVANT - WILL BE DELETED LATER???
-# @app.route("/playlists")
-# def get_playlists():
-#     # Check if access token is in the session. If not ask user for login.
-#     if "access_token" not in session:
-#         return redirect("/")
-
-#     # Check if access token expired if yes, refresh it
-#     if datetime.now().timestamp() > session["expires_at"]:
-#         # Store current url in session. Allows to get back here after token refresh.        
-#         session["url"] = url_for("get_playlists")
-#         print("TOKEN EXPIRED. REFRESHING")
-#         return redirect("/refresh-token")
-
-#     # Set headers with valid token
-#     headers = {
-#         "Authorization": f"Bearer {session["access_token"]}"
-#     }
-#     # Request my playlists.
-#     response = requests.get(API_BASE_URL + "me/playlists", headers=headers)
-
-#     # Store requested playlists as json
-#     playlists = json.dumps(response.json())
-#     return playlists

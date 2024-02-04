@@ -1,8 +1,4 @@
 logsBucket: "gs://spotify-project-logs-bucket"
-# steps:
-# - name: "gcr.io/cloud-builders/gcloud"
-#   args: ["app", "deploy"]
-# timeout: "1600s"
 steps:
 - name: gcr.io/cloud-builders/gsutil
   args: ['cp', 'gs://spotify-project-logs-bucket/spotify-env/env_variables.yaml', 'env_variables.yaml']
