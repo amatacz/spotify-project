@@ -23,8 +23,12 @@ class GCloudIntegration:
         # Access the secret version
         response = client.access_secret_version(request={"name": name})
 
-        # Return the decoded payload
-        return response.payload.data.decode("UTF-8")
+        # Decode payload
+        response_decoded = response.payload.data.decode("UTF-8")
+
+        # Return response in .json
+        self.cloud_key = json.loads(response_decoded)
+        return self.cloud_key
 
     def get_google_cloud_project_id(self) -> str:
         ''' return a cloud project id'''
@@ -35,7 +39,7 @@ class GCloudIntegration:
         Return a client to manage google cloud service from provided .json key file.
         '''
         try:
-            return storage.Client.from_service_account_json(self.cloud_key)  # return client if there is a api key provided
+            return storage.Client.from_service_account_info(self.cloud_key)  # return client if there is a api key provided
         except Exception as e:
             return None  # if there is no api key provided
 

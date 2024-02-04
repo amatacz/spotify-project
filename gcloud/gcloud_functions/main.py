@@ -15,9 +15,11 @@ def main(request):
                                                        f"{datetime.today().date()}_spotify_monthly_data")
     downloaded_data_json = json.loads(downloaded_data)
 
-    print("TYPE OF DATA:\n", type(downloaded_data_json))
-    print("DATA:\n", downloaded_data_json)
+    if downloaded_data_json:
+        print("TYPE OF DATA:\n", type(downloaded_data_json))
+        print("JEST GIT")
 
+    return downloaded_data_json
 
     # # Sent data to bucket
     # cloud_key = gcloud_integrator.get_secret('deft-melody-404117',
