@@ -6,7 +6,7 @@ from shared.gcloud_integration import GCloudIntegration
 
 
 @functions_framework.http
-def main():
+def main(request):
     gcloud_integrator = GCloudIntegration()
     gcloud_integrator.get_secret("deft-melody-404117", "spotify-app-engine-key")
 
