@@ -11,7 +11,7 @@ steps:
     - functions
     - deploy
     -  get-monthly-spotify-data
-    - --entry-point=main
+    - --entry-point=get_spotify_monthly_data_from_bucket
     - --region=us-central1
     - --source=./gcloud/gcloud_functions
     - --trigger-http

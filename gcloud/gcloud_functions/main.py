@@ -30,6 +30,7 @@ def get_spotify_monthly_data_from_bucket(request):
         print(f"Error when downloading data from bucket: {e}")
         return None
 
+
 @functions_framework.http
 def transform_spotify_data(data):
     """
