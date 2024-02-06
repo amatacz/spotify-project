@@ -1,0 +1,12 @@
+fields:
+  - name: "artist"
+    type: "STRING"
+  - name: "artist_link"
+    type: "STRING"
+  - name: "genres"
+    type: "STRING"
+  - name: "popularity"
+    type: "INTEGER"
+  - name: "timestamp"
+    type: "TIMESTAMP"
+    

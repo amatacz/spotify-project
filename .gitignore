@@ -3,5 +3,6 @@ notes.txt
 __pycache__/
 data.json
 env_variables.yaml
-secrets/
+secrets/*
 .ENV_LOCAL
+gcloud/gcloud_functions/.ENV

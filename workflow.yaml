@@ -7,6 +7,8 @@
     headers:
       Content-Type: application/json
     result: flask_response
+
+# to na trigger z GCS, pobiera dane i potem przekazuje do transform_monthly_spotify_data
 # - invoke_get-monthly-spotify-data_function:
 #   call: http.post
 #   args: 

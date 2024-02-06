@@ -28,7 +28,8 @@ class GCloudIntegration:
 
         # Return response in .json
         self.cloud_key = json.loads(response_decoded)
-        return self.cloud_key
+        self.project_id = self.cloud_key['project_id']
+        return self.cloud_key, self.project_id
 
     def get_google_cloud_project_id(self) -> str:
         ''' return a cloud project id'''
@@ -70,66 +71,65 @@ class GCloudIntegration:
         contents = blob.download_as_string()  # download file as string
 
         return contents
-    
-    # def _get_google_cloud_bigquery_client(self) -> bigquery.Client:
-    #     '''
-    #     Return a client to manage google cloud Big Quert from provided .json key file.
-    #     '''
-    #     try:
-    #         credentials = service_account.Credentials.from_service_account_file(self.cloud_key)
-    #         return bigquery.Client(credentials=credentials,
-    #                                project=self.project_id)
-    #     except Exception as e:
-    #         return None # if there is no api key provided
 
+    def _get_google_cloud_bigquery_client(self) -> bigquery.Client:
+        '''
+        Return a client to manage google cloud Big Quert from provided .json key file.
+        '''
+        try:
+            credentials = service_account.Credentials.from_service_account_info(self.cloud_key)
+            return bigquery.Client(credentials=credentials,
+                                   project=self.project_id)
+        except Exception:
+            return None  # if there is no api key provided
 
-    # def _create_bigquery_dataset(self, dataset_name):
-    #     ''' Creates new dataset in BigQuery project.'''
-    #     client = self._get_google_cloud_bigquery_client()  # connect to BigQuery
-    #     dataset = bigquery.Dataset(f"{client.project}.{dataset_name}")  # create dataset
-    #     try:
-    #         dataset = client.create_dataset(dataset, timeout=30)  # make API call
-    #     except Conflict:
-    #         print(f"Dataset {dataset_name} already exists.")
-    #         pass
-    #     except Exception as e:
-    #         print(f"Error occured: {e}")
-    #         pass
+    def _create_bigquery_dataset(self, dataset_name):
+        ''' Creates new dataset in BigQuery project.'''
+        client = self._get_google_cloud_bigquery_client()  # connect to BigQuery
+        dataset = bigquery.Dataset(f"{client.project}.{dataset_name}")  # create dataset
+        try:
+            dataset = client.create_dataset(dataset, timeout=30)  # make API call
+        except Conflict:
+            print(f"Dataset {dataset_name} already exists.")
+            pass
+        except Exception as e:
+            print(f"Error occured while creating dataset: {e}")
+            pass
 
-    # def _create_bigquery_table(self, dataset_name, table_name, schema):
-    #     ''' Creates new tables in BigQuery project and dataset. '''
-    #     table_id = f"{self.project_id}.{dataset_name}.{table_name}"  # create table_id
-    #     table = bigquery.Table(table_id, schema=schema)  # create table
-    #     table.clustering_fields = ["city"]
-    #     table.time_partitioning = bigquery.TimePartitioning(
-    #         type_=bigquery.TimePartitioningType.DAY,
-    #         field='timestamp'
-    #     )
-    #     try:
-    #         table = self._get_google_cloud_bigquery_client().create_table(table)  # make API call
-    #     except Conflict:
-    #         print(f"Table {table} already exists.")
-    #         pass
-    #     except Exception as e:
-    #         print(f"Error occured: {e}")
-    #         pass
+    def _create_bigquery_table(self, dataset_name, table_name, schema):
+        ''' Creates new tables in BigQuery project and dataset. '''
+        table_id = f"{self.project_id}.{dataset_name}.{table_name}"  # create table_id
+        table = bigquery.Table(table_id, schema=schema)  # create table
+        table.clustering_fields = ["city"]
+        table.time_partitioning = bigquery.TimePartitioning(
+            type_=bigquery.TimePartitioningType.DAY,
+            field='timestamp'
+        )
+        try:
+            table = self._get_google_cloud_bigquery_client().create_table(table)  # make API call
+        except Conflict:
+            print(f"Table {table} already exists.")
+            pass
+        except Exception as e:
+            print(f"Error occured while creating table: {e}")
+            pass
 
-    # def _insert_data_from_df_to_bigquery_table(self, dataframe, dataset_name, table_name, schema):
-    #     ''' Inserts data from DataFrame to BigQuery table '''
+    def _insert_data_from_df_to_bigquery_table(self, dataframe, dataset_name, table_name, schema):
+        ''' Inserts data from DataFrame to BigQuery table '''
 
-    #     table_id = f"{self.project_id}.{dataset_name}.{table_name}"  # choose the destination table
-    #     job_config = bigquery.LoadJobConfig(schema=schema)  # choose table schema
-    #     try:
-    #         job = self._get_google_cloud_bigquery_client().load_table_from_dataframe(
-    #             dataframe, table_id, job_config=job_config)  # Upload the contents of a table from a DataFrame
-    #         job.result()  # Start the job and wait for it to complete and get the result
-    #     except Exception as e:
-    #         print("Error occured: ", e)
+        table_id = f"{self.project_id}.{dataset_name}.{table_name}"  # choose the destination table
+        job_config = bigquery.LoadJobConfig(schema=schema)  # choose table schema
+        try:
+            job = self._get_google_cloud_bigquery_client().load_table_from_dataframe(
+                dataframe, table_id, job_config=job_config)  # Upload the contents of a table from a DataFrame
+            job.result()  # Start the job and wait for it to complete and get the result
+        except Exception as e:
+            print("Error occured while inserting data to BQ table: ", e)
 
-    # def create_dataset_table_and_insert_data(self, dataset_name, table_name, schema, data):
-    #     # create BigQuery dataset
-    #     self._create_bigquery_dataset(dataset_name)
-    #     # create BigQueryTable
-    #     self._create_bigquery_table(dataset_name, table_name, schema=schema)
-    #     # populate table with data
-    #     self._insert_data_from_df_to_bigquery_table(data, dataset_name, table_name, schema=schema)
+    def create_dataset_table_and_insert_data(self, dataset_name, table_name, schema, data):
+        # create BigQuery dataset
+        self._create_bigquery_dataset(dataset_name)
+        # create BigQueryTable
+        self._create_bigquery_table(dataset_name, table_name, schema=schema)
+        # populate table with data
+        self._insert_data_from_df_to_bigquery_table(data, dataset_name, table_name, schema=schema)
