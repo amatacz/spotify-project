@@ -15,5 +15,5 @@ fields:
     type: "STRING"
   - name: "popularity"
     type: "INTEGER"
-  - name: "timestamp"
-    type: "TIMESTAMP"
+  - name: "ranking_date"
+    type: "DATE"

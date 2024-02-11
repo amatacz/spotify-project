@@ -17,7 +17,7 @@ class DataTransformator:
                     "artist_link": artist["external_urls"]["spotify"],
                     "genres": str(artist["genres"]),
                     "popularity": artist["popularity"],
-                    "timestamp": datetime.today().date()
+                    "ranking_date": datetime.today().date()
                 }
                 for artist in msg["items"]
                 ]
@@ -45,7 +45,7 @@ class DataTransformator:
                     "album_type": track["album"]["album_type"],
                     "release_date": track["album"]["release_date"],
                     "popularity": track["popularity"],
-                    "timestamp": datetime.today().date()
+                    "ranking_date": datetime.today().date()
                     }
                 for track in msg['items']
                 ]
