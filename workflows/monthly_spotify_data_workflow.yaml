@@ -1,7 +1,7 @@
 main:
   steps:
   - invoke_spotify_app:
-      call: http.get
+      call: http.post
       args:
         url: https://deft-melody-404117.uc.r.appspot.com/get-data
       result: flask_response
