@@ -9,11 +9,11 @@ main:
       headers:
         Content-Type: application/json
       result: flask_response
-   - call_get_spotify_monthly_data_from_bucket:
-     call: http.get
-     args:
-       url: https://europe-central2-deft-melody-404117.cloudfunctions.net/function-get_spotify_monthly_data_from_bucket
-       auth:
+  - call_get_spotify_monthly_data_from_bucket:
+    call: http.get
+    args:
+      url: https://europe-central2-deft-melody-404117.cloudfunctions.net/function-get_spotify_monthly_data_from_bucket
+      auth:
         type: OICD
       result: function_response
   - publish_to_pubsub:
