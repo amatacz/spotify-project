@@ -1,4 +1,3 @@
-from typing import Any
 from google.cloud import secretmanager, storage, bigquery
 from google.oauth2 import service_account
 from google.api_core.exceptions import Conflict
@@ -114,7 +113,8 @@ class GCloudIntegration:
             print(f"Error occured while creating table: {e}")
             pass
 
-    def _insert_data_from_df_to_bigquery_table(self, dataframe, dataset_name, table_name, schema):
+    def _insert_data_from_df_to_bigquery_table(self, dataframe, dataset_name,
+                                               table_name, schema):
         ''' Inserts data from DataFrame to BigQuery table '''
 
         table_id = f"{self.project_id}.{dataset_name}.{table_name}"  # choose the destination table

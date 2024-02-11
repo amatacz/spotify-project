@@ -1,5 +1,4 @@
 from datetime import datetime
-import pandas as pd
 import json
 import functions_framework
 import base64
@@ -43,20 +42,42 @@ def transform_spotify_data(request):
     and transforms it to DataFrames.
     DataFrames are uploaded to tables in BigQuery.
     """
-    encoded_inner_json = request.get_json()["data"]["data"]
-    decoded_inner_json = base64.b64decode(encoded_inner_json).decode("utf-8")
 
+    # Extract the encoded inner JSON string
+    encoded_inner_json = request.get_json()["data"]["data"]
+    # Decode the inner JSON string
+    decoded_inner_json = base64.b64decode(encoded_inner_json).decode("utf-8")
+    # Parse the decoded JSON string
     dict_data = ast.literal_eval(decoded_inner_json)
     json_data = json.dumps(dict_data)
     spotify_dataframe = json.loads(json_data)
 
+    # Create new dictionaries for artists and tracks
     artist_dict = spotify_dataframe["artists_of_the_month"]
     tracks_dict = spotify_dataframe["tracks_of_the_month"]
 
+    # Create object to transform data
     DataTransformatorObject = DataTransformator()
-
     artist_data_frame = DataTransformatorObject.artist_data_transform(artist_dict)
     tracks_data_frame = DataTransformatorObject.tracks_data_transform(tracks_dict)
 
-    print(artist_data_frame.head())
-    print(tracks_data_frame.head())
+    # Connect to bucket
+    gcloud_integrator = GCloudIntegration()
+    gcloud_integrator.get_secret("deft-melody-404117",
+                                 "spotify-app-engine-key")
+
+    # Load table schemas
+    DataConfiguratorObject = DataConfigurator()
+    artists_table_schema = DataConfiguratorObject.load_artists_schema_from_yaml()
+    tracks_table_schema = DataConfiguratorObject.load_tracks_schema_from_yaml()
+
+    # Send data to BigQuery
+    gcloud_integrator._insert_data_from_df_to_bigquery_table(dataframe=artist_data_frame,
+                                                             dataset_name="spotify_dataset",
+                                                             table_name="spotify_monthly_artists",
+                                                             schema=artists_table_schema)
+    gcloud_integrator._insert_data_from_df_to_bigquery_table(dataframe=tracks_data_frame,
+                                                             dataset_name="spotify_dataset",
+                                                             table_name="spotify_monthly_tracks",
+                                                             schema=tracks_table_schema)
+    return "Data sent to BQ."

@@ -1,23 +1,27 @@
 main:
   steps:
-  - invoke_spotify_app:
-      call: http.post
-      args:
-        url: https://deft-melody-404117.uc.r.appspot.com/get-data
-      result: flask_response
-  - call_get_spotify_monthly_data_from_bucket:
-      call: http.get
-      args:
-        url: https://europe-central2-deft-melody-404117.cloudfunctions.net/function-get_spotify_monthly_data_from_bucket
-        auth:
-          type: OICD
-      result: function_response
-  - publish_to_pubsub:
-      call: googleapis.pubsub.v1.projects.topics.publish
-      args:
-        topic: projects/deft-melody-404117/topics/monthly-spotify-data-topic
-        body:
-          messages: ${base64.encode(text.encode(function_response.body))}
-      result: pubsub_response
-  - return_results:
-      return: ${pubsub_response}
+  # - invoke_spotify_app:
+  #     call: http.post
+  #     args:
+  #       url: https://deft-melody-404117.uc.r.appspot.com
+  #       auth:
+  #           type: OAuth2
+  #           scopes: https://deft-melody-404117.uc.r.appspot.com
+  #     result: flask_response
+    - call_get_spotify_monthly_data_from_bucket:
+        call: http.get
+        args:
+          url: https://europe-central2-deft-melody-404117.cloudfunctions.net/function_get_spotify_monthly_data_from_bucket
+          auth:
+            type: OIDC
+        result: function_response
+    - publish_to_pubsub:
+        call: googleapis.pubsub.v1.projects.topics.publish
+        args:
+          topic: projects/deft-melody-404117/topics/monthly-spotify-data-topic
+          body:
+            messages:
+              - data: ${base64.encode(text.encode(function_response.body))}
+        result: pubsub_response
+    - return_results:
+        return: ${pubsub_response}
