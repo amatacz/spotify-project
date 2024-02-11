@@ -3,7 +3,7 @@ steps:
   # Step to save credentials to bucket
   - name: gcr.io/cloud-builders/gsutil
     args: ['cp', 'gs://spotify-project-logs-bucket/spotify-env/env_variables.yaml', 'env_variables.yaml']
-    
+
   # Step to deploy flask app for Spotify authentication and API data retirieval
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
@@ -31,6 +31,7 @@ steps:
       - function_transform_spotify_data
       - --entry-point=transform_spotify_data
       - --region=europe-central2
+      - --source=./gcloud/gcloud_functions
       - --trigger-topic=monthly-spotify-data-topic
       - --runtime=python312
 

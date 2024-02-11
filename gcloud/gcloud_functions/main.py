@@ -37,7 +37,7 @@ def get_spotify_monthly_data_from_bucket(request):
 
 
 @functions_framework.http
-def transform_spotify_data(request, context=None):
+def transform_spotify_data(request):
     """
     This function takes newest spotify data downloaded from bucket
     and transforms it to DataFrames.
