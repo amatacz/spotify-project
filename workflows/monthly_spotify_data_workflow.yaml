@@ -3,7 +3,7 @@ main:
   - invoke_spotify_app:
       call: http.get
       args:
-        url: "https://deft-melody-404117.uc.r.appspot.com/get-data"
+        url: https://deft-melody-404117.uc.r.appspot.com/get-data
       result: flask_response
   - call_get_spotify_monthly_data_from_bucket:
       call: http.get
