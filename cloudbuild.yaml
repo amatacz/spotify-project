@@ -1,20 +1,47 @@
 logsBucket: "gs://spotify-project-logs-bucket"
 steps:
-- name: gcr.io/cloud-builders/gsutil
-  args: ['cp', 'gs://spotify-project-logs-bucket/spotify-env/env_variables.yaml', 'env_variables.yaml']
-- name: 'gcr.io/cloud-builders/gcloud'
-  entrypoint: 'bash'
-  args: ['-c', 'gcloud config set app/cloud_build_timeout 1600 && gcloud app deploy']
-# - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
-#   args:
-#     - gcloud
-#     - functions
-#     - deploy
-#     -  get-monthly-spotify-data
-#     - --entry-point=get_spotify_monthly_data_from_bucket
-#     - --region=us-central1
-#     - --source=./gcloud/gcloud_functions
-#     - --trigger-http
-#     - --runtime=python312
-# timeout: '1600s'
+  # Step to save credentials to bucket
+  - name: gcr.io/cloud-builders/gsutil
+    args: ['cp', 'gs://spotify-project-logs-bucket/spotify-env/env_variables.yaml', 'env_variables.yaml']
+    
+  # Step to deploy flask app for Spotify authentication and API data retirieval
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args: ['-c', 'gcloud config set app/cloud_build_timeout 1600 && gcloud app deploy']
+
+  # Step to deploy GCF get_spotify_monthly_data_from_bucket 
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    args:
+      - gcloud
+      - functions
+      - deploy
+      - function_get_spotify_monthly_data_from_bucket
+      - --entry-point=get_spotify_monthly_data_from_bucket
+      - --region=europe-central2
+      - --source=./gcloud/gcloud_functions
+      - --trigger-http
+      - --runtime=python312
+
+  # Step to deploy GCF transform_spotify_data
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    args:
+      - gcloud
+      - functions
+      - deploy
+      - function_transform_spotify_data
+      - --entry-point=transform_spotify_data
+      - --region=europe-central2
+      - --trigger-topic=monthly-spotify-data-topic
+      - --runtime=python312
+
+  # Step to deploy Cloud Workflow
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: "gcloud"
+    args:
+      - workflows
+      - deploy
+      - monthly-spotify-data-workflow
+      - --source=workflows/monthly_spotify_data_workflow.yaml
+      - --location=europe-central2 
+
 

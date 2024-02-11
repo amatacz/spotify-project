@@ -28,7 +28,8 @@ def get_spotify_monthly_data_from_bucket(request):
         downloaded_data_json = json.loads(downloaded_data)
 
         if downloaded_data_json:
-            return "New spotify data has been downloaded."
+            print(f"{datetime.today().date()} - Spotify data has been downloaded.")
+            return str(downloaded_data_json)
 
     except Exception as e:
         print(f"Error when downloading data from bucket: {e}")
