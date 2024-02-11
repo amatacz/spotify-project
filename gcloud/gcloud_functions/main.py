@@ -1,9 +1,13 @@
 from datetime import datetime
-import json
 import pandas as pd
+import json
 import functions_framework
+import base64
+import ast
+
 from shared.gcloud_integration import GCloudIntegration
 from shared.utils import DataConfigurator
+from shared.data_transformation import DataTransformator
 
 
 @functions_framework.http
@@ -24,7 +28,7 @@ def get_spotify_monthly_data_from_bucket(request):
         downloaded_data_json = json.loads(downloaded_data)
 
         if downloaded_data_json:
-            return "New spotify data has been downlaoded."
+            return "New spotify data has been downloaded."
 
     except Exception as e:
         print(f"Error when downloading data from bucket: {e}")
@@ -32,88 +36,26 @@ def get_spotify_monthly_data_from_bucket(request):
 
 
 @functions_framework.http
-def transform_spotify_data(data):
+def transform_spotify_data(request, context=None):
     """
     This function takes newest spotify data downloaded from bucket
     and transforms it to DataFrames.
     DataFrames are uploaded to tables in BigQuery.
     """
-    try:
-        artists_dict = data['artists_of_the_month']
-        artists_entries = [
-            {
-                "artist": artist["name"],
-                "artist_link": artist["external_urls"]["spotify"],
-                "genres": str(artist["genres"]),
-                "popularity": artist["popularity"],
-                "timestamp": datetime.today()
-            }
-            for artist in artists_dict["items"]
-            ]
-        artists_dict_flattened = {index: entry for index, entry
-                                in enumerate(artists_entries)}
+    encoded_inner_json = request.get_json()["data"]["data"]
+    decoded_inner_json = base64.b64decode(encoded_inner_json).decode("utf-8")
 
-        artists_df = pd.DataFrame.from_dict(artists_dict_flattened, orient="index")
-        artists_df.sort_values("popularity", ascending=False, inplace=True)
-        artists_df.reset_index(drop=True, inplace=True)
-    except Exception as e:
-        print(f"Error while artist data transformation:\n {e}")
+    dict_data = ast.literal_eval(decoded_inner_json)
+    json_data = json.dumps(dict_data)
+    spotify_dataframe = json.loads(json_data)
 
-    try:
-        gcloud_integrator = GCloudIntegration()
-        gcloud_integrator.get_secret("deft-melody-404117",
-                                     "spotify-app-engine-key")
-    except Exception as e:
-        print(f"Error while creating BQ client:\n {e}")
+    artist_dict = spotify_dataframe["artists_of_the_month"]
+    tracks_dict = spotify_dataframe["tracks_of_the_month"]
 
-    try:
-        data_configurator = DataConfigurator()
-        artists_table_schema = data_configurator.load_artists_schema_from_yaml()
-        gcloud_integrator._insert_data_from_df_to_bigquery_table(
-            artists_df,
-            "spotify_dataset",
-            "spotify_monthly_artists",
-            schema=artists_table_schema)
-    except Exception as e:
-        print(f"Error while uploading artists data to table:\n {e}")
+    DataTransformatorObject = DataTransformator()
 
-    try:
-        tracks_dict = data['tracks_of_the_month']
-        tracks_entries = [
-            {
-                "artist": track["artists"][0]["name"],
-                "artist_link": track["artists"][0]["external_urls"]["spotify"],
-                "track_title": track["name"],
-                "track_link": track["external_urls"]["spotify"],
-                "album": track["album"]["name"],
-                "album_type": track["album"]["album_type"],
-                "release_date": track["album"]["release_date"],
-                "popularity": track["popularity"],
-                "timestamp": datetime.today()
-                }
-            for track in tracks_dict['items']
-            ]
-        tracks_dict_flattened = {index: entry for index, entry in enumerate(tracks_entries)}
-        tracks_df = pd.DataFrame.from_dict(tracks_dict_flattened, orient="index")
-        tracks_df.sort_values("popularity", ascending=False, inplace=True)
-        tracks_df.reset_index(drop=True, inplace=True)
+    artist_data_frame = DataTransformatorObject.artist_data_transform(artist_dict)
+    tracks_data_frame = DataTransformatorObject.tracks_data_transform(tracks_dict)
 
-    except Exception as e:
-        print(f"Error while tracks data transformation:\n {e}")
-        return None
-
-    try:
-        gcloud_integrator = GCloudIntegration()
-        gcloud_integrator.get_secret("deft-melody-404117", "spotify-app-engine-key")
-        data_configurator = DataConfigurator()
-        tracks_table_schema = data_configurator.load_tracks_schema_from_yaml()
-        gcloud_integrator._insert_data_from_df_to_bigquery_table(
-            tracks_df,
-            "spotify_dataset",
-            "spotify_monthly_tracks",
-            schema=tracks_table_schema)
-    except Exception as e:
-        print(f"Error while uploading tracks data to table:\n {e}")
-        return None
-
-    return "DATA SUCCESFULLY TRANSFORMED AND UPLOADED"
+    print(artist_data_frame.head())
+    print(tracks_data_frame.head())

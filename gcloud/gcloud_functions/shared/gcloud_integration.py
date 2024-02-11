@@ -41,7 +41,7 @@ class GCloudIntegration:
         '''
         try:
             return storage.Client.from_service_account_info(self.cloud_key)  # return client if there is a api key provided
-        except Exception as e:
+        except Exception:
             return None  # if there is no api key provided
 
     def upload_data_to_cloud_from_file(self, bucket_name, data_to_upload, blob_name):

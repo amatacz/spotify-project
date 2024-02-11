@@ -1,19 +1,17 @@
-- invoke_spotify_app:
-  call: http.post
-  args:
-    url: "https://deft-melody-404117.uc.r.appspot.com/get-data"
-    body:
-      ${data}
-    headers:
-      Content-Type: application/json
-    result: flask_response
-
-# to na trigger z GCS, pobiera dane i potem przekazuje do transform_monthly_spotify_data
-# - invoke_get-monthly-spotify-data_function:
-#   call: http.post
-#   args: 
-#     url: "https://us-central1-deft-melody-404117.cloudfunctions.net/get-monthly-spotify-data"
-#     body: ${flask_response.body}
-#     headers:
-#       Content-Type: application/json
-#     result: function_response
+main:
+  steps:
+  - invoke_spotify_app:
+    call: http.post
+    args:
+      url: "https://deft-melody-404117.uc.r.appspot.com/get-data"
+      body:
+        ${data}
+      headers:
+        Content-Type: application/json
+      result: flask_response
+  # - call_get_spotify_monthly_data_from_bucket:
+  #   call: http.get
+  #   args:
+  #     url"
+  # - publish_to_pubsub:
+  # - return_results:
