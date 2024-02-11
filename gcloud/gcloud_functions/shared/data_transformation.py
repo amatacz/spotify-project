@@ -15,7 +15,7 @@ class DataTransformator:
                 {
                     "artist": artist["name"],
                     "artist_link": artist["external_urls"]["spotify"],
-                    "genres": artist["genres"],
+                    "genres": str(artist["genres"]),
                     "popularity": artist["popularity"],
                     "timestamp": datetime.today()
                 }

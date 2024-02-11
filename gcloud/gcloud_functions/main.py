@@ -80,4 +80,4 @@ def transform_spotify_data(request):
                                                              dataset_name="spotify_dataset",
                                                              table_name="spotify_monthly_tracks",
                                                              schema=tracks_table_schema)
-    return "Data sent to BQ."
+    return "Hurray! Data sent to BQ."
