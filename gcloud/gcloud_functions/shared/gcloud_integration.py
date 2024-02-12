@@ -1,6 +1,7 @@
 from google.cloud import secretmanager, storage, bigquery
 from google.oauth2 import service_account
 from google.api_core.exceptions import Conflict
+from datetime import datetime
 import json
 
 
@@ -125,6 +126,15 @@ class GCloudIntegration:
             job.result()  # Start the job and wait for it to complete and get the result
         except Exception as e:
             print("Error occured while inserting data to BQ table: ", e)
+
+    def get_data_from_bigquery_table(self, dataset_name, table_name, condition=None):
+        """
+        """
+        table_id = f"{self.project_id}.{dataset_name}.{table_name}"  # choose the destination table
+        query = f"SELECT * FROM {table_id} {condition}"
+        bq_data = self._get_google_cloud_bigquery_client().query(query)
+
+        return bq_data
 
     def create_dataset_table_and_insert_data(self, dataset_name, table_name, schema, data):
         # create BigQuery dataset

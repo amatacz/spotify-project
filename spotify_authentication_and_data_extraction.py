@@ -45,7 +45,7 @@ def login():
         "response_type": "code",
         "scope": SCOPE,
         "redirect_uri": REDIRECT_URI,
-        # "show_dialog": True
+        "show_dialog": True
     }
     # Create auth_url for create authorization code
     auth_url = f"{AUTH_URL}?{urllib.parse.urlencode(params)}"
@@ -68,6 +68,7 @@ def callback():
             "client_id": CLIENT_ID,
             "client_secret": CLIENT_SECRET
         }
+        print(f"CODE \n {req_body["code"]}")
         # Request for token using TOKEN_URL and requred parameters
         response = requests.post(TOKEN_URL, data=req_body)
         token_info = response.json()
@@ -76,6 +77,9 @@ def callback():
         session["access_token"] = token_info["access_token"]
         session["refresh_token"] = token_info["refresh_token"]
         session["expires_at"] = datetime.now().timestamp() + token_info["expires_in"]
+
+        print(f"ACCESS TOKEN\n {session["access_token"]}")
+        print(f"REFRESH TOKEN\n {session["refresh_token"]}")
 
         return redirect("/get-data")
     return redirect("/")

@@ -1,13 +1,13 @@
 main:
   steps:
-  # - invoke_spotify_app:
-  #     call: http.post
-  #     args:
-  #       url: https://deft-melody-404117.uc.r.appspot.com
-  #       auth:
-  #           type: OAuth2
-  #           scopes: https://deft-melody-404117.uc.r.appspot.com
-  #     result: flask_response
+    - invoke_spotify_app:
+        call: http.get
+        args:
+          url: https://deft-melody-404117.uc.r.appspot.com
+          headers:
+            Authorization: 'Bearer: ${sys.get_env("ACCESS_TOKEN")}'
+            Refresh_token: ${sys.get_env("REFRESH_TOKEN")}
+        result: flask_response
     - call_get_spotify_monthly_data_from_bucket:
         call: http.get
         args:
