@@ -120,12 +120,13 @@ class GCloudIntegration:
 
         table_id = f"{self.project_id}.{dataset_name}.{table_name}"  # choose the destination table
         job_config = bigquery.LoadJobConfig(schema=schema)  # choose table schema
+        job_config.source_format = 'CSV'
         try:
             job = self._get_google_cloud_bigquery_client().load_table_from_dataframe(
                 dataframe, table_id, job_config=job_config)  # Upload the contents of a table from a DataFrame
             job.result()  # Start the job and wait for it to complete and get the result
         except Exception as e:
-            print("Error occured while inserting data to BQ table: ", e)
+            print(f"Error occured while inserting data to BQ table {table_name}: {e}")
 
     def get_data_from_bigquery_table(self, dataset_name, table_name, condition=None):
         """

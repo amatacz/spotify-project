@@ -4,7 +4,7 @@ fields:
   - name: "artist_link"
     type: "STRING"
   - name: "genres"
-    type: "STRING"
+    type: "JSON"
   - name: "popularity"
     type: "INTEGER"
   - name: "ranking_date"

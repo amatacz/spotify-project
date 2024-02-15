@@ -46,23 +46,23 @@ def transform_spotify_data(request):
     DataFrames are uploaded to tables in BigQuery.
     """
 
-    # # Extract the encoded inner JSON string
-    # encoded_inner_json = request.get_json()["data"]["data"]
-    # # Decode the inner JSON string
-    # decoded_inner_json = base64.b64decode(encoded_inner_json).decode("utf-8")
-    # # Parse the decoded JSON string
-    # dict_data = ast.literal_eval(decoded_inner_json)
-    # json_data = json.dumps(dict_data)
-    # spotify_dataframe = json.loads(json_data)
+    # Extract the encoded inner JSON string
+    encoded_inner_json = request.get_json()["data"]["data"]
+    # Decode the inner JSON string
+    decoded_inner_json = base64.b64decode(encoded_inner_json).decode("utf-8")
+    # Parse the decoded JSON string
+    dict_data = ast.literal_eval(decoded_inner_json)
+    json_data = json.dumps(dict_data)
+    spotify_dataframe = json.loads(json_data)
 
-    # # Create new dictionaries for artists and tracks
-    # artist_dict = spotify_dataframe["artists_of_the_month"]
-    # tracks_dict = spotify_dataframe["tracks_of_the_month"]
+    # Create new dictionaries for artists and tracks
+    artist_dict = spotify_dataframe["artists_of_the_month"]
+    tracks_dict = spotify_dataframe["tracks_of_the_month"]
 
-    # # Create object to transform data
-    # DataTransformatorObject = DataTransformator()
-    # artist_data_frame = DataTransformatorObject.artist_data_transform(artist_dict)
-    # tracks_data_frame = DataTransformatorObject.tracks_data_transform(tracks_dict)
+    # Create object to transform data
+    DataTransformatorObject = DataTransformator()
+    artist_data_frame = DataTransformatorObject.artist_data_transform(artist_dict)
+    tracks_data_frame = DataTransformatorObject.tracks_data_transform(tracks_dict)
 
     # Connect to bucket
     gcloud_integrator = GCloudIntegration()
@@ -74,24 +74,37 @@ def transform_spotify_data(request):
     artists_table_schema = DataConfiguratorObject.load_artists_schema_from_yaml()
     tracks_table_schema = DataConfiguratorObject.load_tracks_schema_from_yaml()
 
-    # Verify if todays data is already present in the table. If not send new data to BQ.
-    if gcloud_integrator.get_data_from_bigquery_table(dataset_name="spotify_dataset",
-                                                      table_name="spotify_monthly_artists",
-                                                      condition=f"WHERE ranking_date = f{datetime.today().date()}"):
-        print("Todays artist data already present in the table!")
-    else:
-        gcloud_integrator._insert_data_from_df_to_bigquery_table(dataframe=artist_data_frame,
-                                                                 dataset_name="spotify_dataset",
-                                                                 table_name="spotify_monthly_artists",
-                                                                 schema=artists_table_schema)
+    #  TU OPCJA Z ZAPYTANIEM DO TABELI, ZEBY SPRAWDZIĆ, CZY DANE Z DZISIAJ JUŻ ISTNIEJA
+    # # Verify if todays data is already present in the table. If not send new data to BQ.
+    # if gcloud_integrator.get_data_from_bigquery_table(dataset_name="spotify_dataset",
+    #                                                   table_name="spotify_monthly_artists",
+    #                                                   condition=f"WHERE ranking_date = {datetime.today().date()}"):
+    #     print("Todays artist data already present in the table!")
+    # else:
+    #     gcloud_integrator._insert_data_from_df_to_bigquery_table(dataframe=artist_data_frame,
+    #                                                              dataset_name="spotify_dataset",
+    #                                                              table_name="spotify_monthly_artists2",
+    #                                                              schema=artists_table_schema)
 
-    # Verify if todays data is already present in the table. If not send new data to BQ.
-    if gcloud_integrator.get_data_from_bigquery_table(dataset_name="spotify_dataaset",
-                                                      table_name="spotify_monthly_tracks"):
-        print("Todays tracks data already present in the table!")
-    else:
-        gcloud_integrator._insert_data_from_df_to_bigquery_table(dataframe=tracks_data_frame,
-                                                                 dataset_name="spotify_dataset",
-                                                                 table_name="spotify_monthly_tracks",
-                                                                 schema=tracks_table_schema)
-    return "DONE"
+    # # Verify if todays data is already present in the table. If not send new data to BQ.
+    # if gcloud_integrator.get_data_from_bigquery_table(dataset_name="spotify_dataaset",
+    #                                                   table_name="spotify_monthly_tracks",
+    #                                                   condition=f"WHERE ranking_date = {datetime.today().date()}"):
+    #     print("Todays tracks data already present in the table!")
+    # else:
+    #     gcloud_integrator._insert_data_from_df_to_bigquery_table(dataframe=tracks_data_frame,
+    #                                                              dataset_name="spotify_dataset",
+    #                                                              table_name="spotify_monthly_tracks",
+    #                                                              schema=tracks_table_schema)
+    # return "DONE"
+
+    gcloud_integrator._insert_data_from_df_to_bigquery_table(dataframe=artist_data_frame,
+                                                             dataset_name="spotify_dataset",
+                                                             table_name="spotify_monthly_artists2",
+                                                             schema=artists_table_schema)
+    gcloud_integrator._insert_data_from_df_to_bigquery_table(dataframe=tracks_data_frame,
+                                                             dataset_name="spotify_dataset",
+                                                             table_name="spotify_monthly_tracks",
+                                                             schema=tracks_table_schema)
+
+    return "done"

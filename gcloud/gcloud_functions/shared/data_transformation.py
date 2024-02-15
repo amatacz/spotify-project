@@ -1,8 +1,7 @@
 import pandas as pd
 from datetime import datetime
 import json
-import functions_framework
-from shared.gcloud_integration import GCloudIntegration
+import ast
 
 
 class DataTransformator:
@@ -15,7 +14,7 @@ class DataTransformator:
                 {
                     "artist": artist["name"],
                     "artist_link": artist["external_urls"]["spotify"],
-                    "genres": str(artist["genres"]),
+                    "genres": {str(index): genre for index, genre in enumerate(artist["genres"])},
                     "popularity": artist["popularity"],
                     "ranking_date": datetime.today().date()
                 }
