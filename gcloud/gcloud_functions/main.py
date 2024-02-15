@@ -100,7 +100,7 @@ def transform_spotify_data(request):
 
     gcloud_integrator._insert_data_from_df_to_bigquery_table(dataframe=artist_data_frame,
                                                              dataset_name="spotify_dataset",
-                                                             table_name="spotify_monthly_artists2",
+                                                             table_name="spotify_monthly_artists",
                                                              schema=artists_table_schema)
     gcloud_integrator._insert_data_from_df_to_bigquery_table(dataframe=tracks_data_frame,
                                                              dataset_name="spotify_dataset",

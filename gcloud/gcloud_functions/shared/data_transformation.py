@@ -14,7 +14,8 @@ class DataTransformator:
                 {
                     "artist": artist["name"],
                     "artist_link": artist["external_urls"]["spotify"],
-                    "genres": {str(index): genre for index, genre in enumerate(artist["genres"])},
+                    # "genres": {str(index): genre for index, genre in enumerate(artist["genres"])},
+                    "genres": str(artist["genres"]),
                     "popularity": artist["popularity"],
                     "ranking_date": datetime.today().date()
                 }
